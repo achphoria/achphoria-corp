@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Exo+2:wght@400;500;600&display=swap');
+
+:root {
+  --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+  --font-body: 'Exo 2', 'Segoe UI', sans-serif;
+  --ink: #e8f4ff;
+  color-scheme: dark;
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #050814;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
