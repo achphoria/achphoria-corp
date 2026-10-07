@@ -17,6 +17,7 @@ export default function App() {
   const [allTasks, setAllTasks] = useState<AcTask[]>([])
   const [loadingTasks, setLoadingTasks] = useState(false)
   const [clock, setClock] = useState(() => new Date())
+  const [briefSignal, setBriefSignal] = useState(0)
 
   const idToSlug = useMemo(() => {
     const map = new Map<string, string>()
@@ -94,6 +95,7 @@ export default function App() {
 
       <main className="layout">
         <IsometricOffice
+          briefSignal={briefSignal}
           selectedSlug={selected?.slug ?? null}
           onSelect={setSelected}
           taskCounts={taskCounts}
@@ -106,6 +108,7 @@ export default function App() {
           />
           <BriefForm
             onSubmitted={() => {
+              setBriefSignal((n) => n + 1)
               void loadAgentsAndTasks()
             }}
           />

@@ -91,22 +91,8 @@ export const DESK_AGENTS: DeskAgent[] = [
   },
 ]
 
-/** Posisi kursi tiap agen di ilustrasi public/scene/lunar-office.webp, dalam persen */
-export const SEAT_POSITIONS: Record<string, { x: number; y: number }> = {
-  arka: { x: 53.5, y: 36 },
-  nisa: { x: 28.8, y: 45 },
-  bima: { x: 16.6, y: 57 },
-  laras: { x: 37.4, y: 59 },
-  dimas: { x: 51.5, y: 59 },
-  sari: { x: 64.6, y: 60 },
-  maya: { x: 30.5, y: 83 },
-  galih: { x: 44, y: 85 },
-  reza: { x: 56.3, y: 85 },
-  tia: { x: 69.5, y: 85 },
-}
-
-export function avatarUrl(slug: string) {
-  return `${import.meta.env.BASE_URL}avatars/${slug}.webp`
+export function characterUrl(slug: string) {
+  return `${import.meta.env.BASE_URL}characters/${slug}.webp`
 }
 
 /** Urutan build: Maya → Galih → Reza → Tia; Arka menutup */

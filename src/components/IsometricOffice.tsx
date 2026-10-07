@@ -1,46 +1,74 @@
-import { DESK_AGENTS, SEAT_POSITIONS, avatarUrl, type DeskAgent } from '../data/agents'
+import { useEffect } from 'react'
+import { DESK_AGENTS, characterUrl, type DeskAgent } from '../data/agents'
+import { NODES, characterHeight } from '../data/scene'
+import { useCrewSimulation, type CrewState } from '../hooks/useCrewSimulation'
 
 type Props = {
+  /** Naik setiap kali brief terkirim — Pak Arka berjalan ke airlock */
+  briefSignal: number
   selectedSlug: string | null
   onSelect: (agent: DeskAgent) => void
   taskCounts: Record<string, number>
 }
 
-function AgentPin({
+const DEBUG = new URLSearchParams(window.location.search).has('debug')
+
+function CrewMember({
   agent,
+  state,
   selected,
   taskCount,
   onSelect,
 }: {
   agent: DeskAgent
+  state: CrewState
   selected: boolean
   taskCount: number
   onSelect: () => void
 }) {
-  const seat = SEAT_POSITIONS[agent.slug]
   const label = `${agent.displayName} · ${agent.title}`
+  const height = characterHeight(state.y)
 
   return (
     <button
       type="button"
-      className={`agent-pin ${agent.deskRow} ${selected ? 'selected' : ''} ${agent.isFrontDoor ? 'front-door' : ''}`}
-      style={{ left: `${seat.x}%`, top: `${seat.y}%`, zIndex: Math.round(seat.y) }}
+      className={`crew ${agent.deskRow} ${state.walking ? 'walking' : 'idle'} ${selected ? 'selected' : ''}`}
+      style={{
+        left: `${state.x}%`,
+        top: `${state.y}%`,
+        height: `${height}%`,
+        zIndex: Math.round(state.y * 10),
+      }}
       onClick={onSelect}
       aria-label={label}
       aria-pressed={selected}
     >
-      {selected ? <span className="plumbob" aria-hidden="true" /> : null}
-      <span className="pin-avatar">
-        <img src={avatarUrl(agent.slug)} alt="" loading="lazy" />
-        {taskCount > 0 ? <span className="pin-count">{taskCount}</span> : null}
+      <span className="crew-shadow" aria-hidden="true" />
+      <span className={`crew-body ${state.facingLeft ? 'flip' : ''}`}>
+        <img src={characterUrl(agent.slug)} alt="" draggable={false} />
       </span>
-      <span className="pin-name">{agent.displayName.replace(/^(Pak|Mbak)\s/, '')}</span>
-      <span className="pin-tooltip">{label}</span>
+      <span className="crew-head" aria-hidden="true">
+        {selected ? <span className="plumbob" /> : null}
+        {state.bubble ? <span className="crew-bubble">{state.bubble}</span> : null}
+        <span className={`crew-tag ${agent.isFrontDoor ? 'front-door' : ''}`}>
+          {agent.displayName.replace(/^(Pak|Mbak)\s/, '')}
+          {taskCount > 0 ? <span className="crew-count">{taskCount}</span> : null}
+        </span>
+      </span>
+      <span className="crew-tooltip">{label}</span>
     </button>
   )
 }
 
-export function IsometricOffice({ selectedSlug, onSelect, taskCounts }: Props) {
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+export function IsometricOffice({ briefSignal, selectedSlug, onSelect, taskCounts }: Props) {
+  const { crew, deliverBrief } = useCrewSimulation(REDUCED_MOTION)
+
+  useEffect(() => {
+    if (briefSignal > 0) deliverBrief()
+  }, [briefSignal, deliverBrief])
+
   return (
     <section className="lunar-office" aria-label="Kantor lunar ACHPHORIA">
       <header className="habitat-header">
@@ -51,7 +79,9 @@ export function IsometricOffice({ selectedSlug, onSelect, taskCounts }: Props) {
         <div className="habitat-meta">
           <span className="meta-pill live">● LIVE</span>
           <span className="meta-pill">Gravitasi sim · 1 lantai</span>
-          <span className="meta-pill">{DESK_AGENTS.length} kru aktif</span>
+          <span className="meta-pill">
+            {crew.filter((c) => c.walking).length} berjalan · {DESK_AGENTS.length} kru
+          </span>
         </div>
       </header>
 
@@ -61,21 +91,32 @@ export function IsometricOffice({ selectedSlug, onSelect, taskCounts }: Props) {
           src={`${import.meta.env.BASE_URL}scene/lunar-office.webp`}
           alt="Interior habitat lunar ACHPHORIA: airlock, dua baris meja kerja, jendela ke permukaan bulan dan Bumi"
         />
-        {DESK_AGENTS.map((agent) => (
-          <AgentPin
-            key={agent.slug}
-            agent={agent}
-            selected={selectedSlug === agent.slug}
-            taskCount={taskCounts[agent.slug] ?? 0}
-            onSelect={() => onSelect(agent)}
-          />
-        ))}
+        {DEBUG
+          ? Object.entries(NODES).map(([id, p]) => (
+              <span key={id} className="debug-node" style={{ left: `${p.x}%`, top: `${p.y}%` }}>
+                {id}
+              </span>
+            ))
+          : null}
+        {crew.map((state) => {
+          const agent = DESK_AGENTS.find((a) => a.slug === state.slug)!
+          return (
+            <CrewMember
+              key={state.slug}
+              agent={agent}
+              state={state}
+              selected={selectedSlug === state.slug}
+              taskCount={taskCounts[state.slug] ?? 0}
+              onSelect={() => onSelect(agent)}
+            />
+          )
+        })}
       </div>
 
       <p className="scene-legend">
         <span className="legend-dot klien" /> Dek klien
         <span className="legend-dot build" /> Dek build · Maya → Galih → Reza → Tia, Pak Arka
-        menutup
+        menutup · klik kru untuk melihat tugas
       </p>
     </section>
   )

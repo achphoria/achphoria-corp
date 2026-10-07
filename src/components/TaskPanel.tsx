@@ -1,4 +1,4 @@
-import { avatarUrl, type DeskAgent } from '../data/agents'
+import { characterUrl, type DeskAgent } from '../data/agents'
 import type { AcTask } from '../lib/supabase'
 
 type Props = {
@@ -20,12 +20,14 @@ export function TaskPanel({ agent, tasks, loading }: Props) {
       <h2>Panel tugas</h2>
       {!agent ? (
         <p className="panel-empty">
-          Arahkan kursor ke avatar untuk melihat nama, lalu klik untuk memuat tugas.
+          Arahkan kursor ke kru untuk melihat nama, lalu klik untuk memuat tugas.
         </p>
       ) : (
         <>
           <div className="panel-agent">
-            <img className="panel-avatar" src={avatarUrl(agent.slug)} alt="" />
+            <span className="panel-avatar">
+              <img src={characterUrl(agent.slug)} alt="" />
+            </span>
             <p className="panel-agent-text">
               <span className="panel-agent-name">{agent.displayName}</span>
               <span className="panel-agent-title">{agent.title}</span>
