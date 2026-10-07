@@ -19,7 +19,17 @@ Kantor virtual satu lantai dengan sepuluh meja (baris klien & baris build). Baha
 
 Pengguna hanya chat ke Pak Arka. Yang lain menerima pekerjaan dari beliau. Urutan build: **Maya → Galih → Reza → Tia**; Arka yang menutup.
 
-## Menjalankan aplikasi
+## Akses online (GitHub Pages)
+
+Setelah Pages diaktifkan: **https://achphoria.github.io/achphoria-corp/**
+
+Satu kali di GitHub repo → **Settings → Pages**:
+1. Source: **GitHub Actions**
+2. **Settings → Secrets and variables → Actions** → tambah:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+
+## Menjalankan aplikasi (lokal)
 
 ```bash
 cp .env.example .env
@@ -27,6 +37,8 @@ cp .env.example .env
 npm install
 npm run dev
 ```
+
+Buka **http://localhost:5173**.
 
 Kunci dibaca dari environment saja — jangan menulis kunci di kode, dan jangan pakai `service_role` di klien. File `.env` diabaikan oleh `.gitignore`.
 
