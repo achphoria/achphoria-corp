@@ -1,0 +1,61 @@
+import type { DeskAgent } from '../data/agents'
+import type { AcTask } from '../lib/supabase'
+
+type Props = {
+  agent: DeskAgent | null
+  tasks: AcTask[]
+  loading: boolean
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  antrian: 'Antrian',
+  proses: 'Proses',
+  selesai: 'Selesai',
+  ditahan: 'Ditahan',
+}
+
+export function TaskPanel({ agent, tasks, loading }: Props) {
+  return (
+    <aside className="task-panel" aria-label="Panel tugas">
+      <h2>Panel tugas</h2>
+      {!agent ? (
+        <p className="panel-empty">
+          Arahkan kursor ke meja untuk melihat nama, lalu klik untuk memuat tugas.
+        </p>
+      ) : (
+        <>
+          <p className="panel-agent">
+            <span className="panel-agent-name">{agent.displayName}</span>
+            <span className="panel-agent-title">{agent.title}</span>
+          </p>
+          {agent.isFrontDoor ? (
+            <p className="panel-hint">
+              Pintu depan. Kirim brief lewat formulir — yang lain menerima pekerjaan dari
+              beliau.
+            </p>
+          ) : (
+            <p className="panel-hint">
+              Menerima pekerjaan dari Pak Arka. Chat klien hanya ke pintu depan.
+            </p>
+          )}
+          {loading ? (
+            <p className="panel-empty">Memuat tugas…</p>
+          ) : tasks.length === 0 ? (
+            <p className="panel-empty">Belum ada tugas di meja ini.</p>
+          ) : (
+            <ul className="task-list">
+              {tasks.map((task) => (
+                <li key={task.id}>
+                  <span className="task-title">{task.title}</span>
+                  <span className={`task-status status-${task.status}`}>
+                    {STATUS_LABEL[task.status] ?? task.status}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+    </aside>
+  )
+}
