@@ -24,8 +24,8 @@ type Walker = {
 }
 
 /** Persen per detik — x dan y punya skala berbeda di gambar 16:9 */
-const SPEED = 7
-const MAX_WALKERS = 3
+const SPEED = 10
+const MAX_WALKERS = 4
 
 function displayName(slug: string) {
   return DESK_AGENTS.find((a) => a.slug === slug)?.displayName.replace(/^(Pak|Mbak)\s/, '') ?? slug
