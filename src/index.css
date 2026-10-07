@@ -1,21 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,700&family=Figtree:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Exo+2:wght@400;500;600&display=swap');
 
 :root {
-  --font-display: 'Bricolage Grotesque', Georgia, serif;
-  --font-body: 'Figtree', 'Segoe UI', sans-serif;
-  --ink: #e8dcc4;
-  --ink-deep: #121a1e;
-  --cream: #f3ead8;
-  --mist: #b7c2b8;
-  --brass: #d4a855;
+  --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+  --font-body: 'Exo 2', 'Segoe UI', sans-serif;
+  --ink: #e8f4ff;
   color-scheme: dark;
   font-family: var(--font-body);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
-  font-weight: 400;
 }
 
 *,
@@ -32,15 +23,11 @@ body,
 }
 
 body {
-  background: #0f1c24;
+  background: #050814;
 }
 
 button,
 input,
 textarea {
   font: inherit;
-}
-
-a {
-  color: inherit;
 }

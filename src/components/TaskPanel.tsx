@@ -30,12 +30,12 @@ export function TaskPanel({ agent, tasks, loading }: Props) {
           </p>
           {agent.isFrontDoor ? (
             <p className="panel-hint">
-              Pintu depan. Kirim brief lewat formulir — yang lain menerima pekerjaan dari
-              beliau.
+              Airlock · pintu depan habitat. Kirim brief lewat formulir — kru lain menerima
+              arahan dari beliau.
             </p>
           ) : (
             <p className="panel-hint">
-              Menerima pekerjaan dari Pak Arka. Chat klien hanya ke pintu depan.
+              Kru dek lunar. Menerima pekerjaan dari Pak Arka. Chat klien hanya ke airlock.
             </p>
           )}
           {loading ? (

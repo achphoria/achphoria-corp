@@ -95,7 +95,8 @@ export function BriefForm({ onSubmitted }: Props) {
     <section className="brief-form" aria-label="Formulir singkat ke Pak Arka">
       <h2>Kirim brief ke Pak Arka</h2>
       <p className="form-lead">
-        Hanya pintu depan yang menerima chat klien. Yang lain bekerja dari arahan beliau.
+        Sinyal klien masuk lewat airlock Pak Arka. Kru lain bekerja dari arahan beliau di
+        habitat bulan.
       </p>
       <form onSubmit={handleSubmit}>
         <label>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BriefForm } from './components/BriefForm'
-import { OfficeMap } from './components/OfficeMap'
+import { IsometricOffice } from './components/IsometricOffice'
 import { TaskPanel } from './components/TaskPanel'
 import { DESK_AGENTS, type DeskAgent } from './data/agents'
 import {
@@ -16,6 +16,7 @@ export default function App() {
   const [dbAgents, setDbAgents] = useState<AcAgent[]>([])
   const [allTasks, setAllTasks] = useState<AcTask[]>([])
   const [loadingTasks, setLoadingTasks] = useState(false)
+  const [clock, setClock] = useState(() => new Date())
 
   const idToSlug = useMemo(() => {
     const map = new Map<string, string>()
@@ -65,21 +66,34 @@ export default function App() {
     void loadAgentsAndTasks()
   }, [loadAgentsAndTasks])
 
+  useEffect(() => {
+    const id = window.setInterval(() => setClock(new Date()), 30_000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  const timeLabel = clock.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
   return (
-    <div className="app-shell">
+    <div className="app-shell space-theme">
       <div className="atmosphere" aria-hidden="true" />
-      <header className="top-bar">
+      <header className="top-bar hud-bar">
         <div>
           <p className="top-brand">ACHPHORIA CORP</p>
-          <p className="top-sub">Ruang kerja virtual · bahasa Indonesia</p>
+          <p className="top-sub">Lunar virtual office · bahasa Indonesia · mode Sims isometric</p>
         </div>
-        <p className={`db-pill ${isSupabaseConfigured ? 'on' : 'off'}`}>
-          {isSupabaseConfigured ? 'Supabase terhubung' : 'Mode lokal · isi .env'}
-        </p>
+        <div className="hud-right">
+          <p className="hud-clock">{timeLabel} WIB</p>
+          <p className={`db-pill ${isSupabaseConfigured ? 'on' : 'off'}`}>
+            {isSupabaseConfigured ? 'Supabase · uplink OK' : 'Mode lokal · isi .env'}
+          </p>
+        </div>
       </header>
 
       <main className="layout">
-        <OfficeMap
+        <IsometricOffice
           selectedSlug={selected?.slug ?? null}
           onSelect={setSelected}
           taskCounts={taskCounts}
@@ -98,9 +112,10 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="site-footer">
-        <span>
-          {DESK_AGENTS.length} meja · baris klien &amp; build · chat hanya ke Pak Arka
+      <footer className="site-footer ticker-footer">
+        <span className="ticker">
+          {DESK_AGENTS.length} kru · dek klien &amp; build · Maya → Galih → Reza → Tia · Arka
+          menutup · kirim brief ke airlock Pak Arka
         </span>
       </footer>
     </div>
