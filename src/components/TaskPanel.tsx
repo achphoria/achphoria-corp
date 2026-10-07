@@ -1,4 +1,4 @@
-import type { DeskAgent } from '../data/agents'
+import { avatarUrl, type DeskAgent } from '../data/agents'
 import type { AcTask } from '../lib/supabase'
 
 type Props = {
@@ -20,14 +20,17 @@ export function TaskPanel({ agent, tasks, loading }: Props) {
       <h2>Panel tugas</h2>
       {!agent ? (
         <p className="panel-empty">
-          Arahkan kursor ke meja untuk melihat nama, lalu klik untuk memuat tugas.
+          Arahkan kursor ke avatar untuk melihat nama, lalu klik untuk memuat tugas.
         </p>
       ) : (
         <>
-          <p className="panel-agent">
-            <span className="panel-agent-name">{agent.displayName}</span>
-            <span className="panel-agent-title">{agent.title}</span>
-          </p>
+          <div className="panel-agent">
+            <img className="panel-avatar" src={avatarUrl(agent.slug)} alt="" />
+            <p className="panel-agent-text">
+              <span className="panel-agent-name">{agent.displayName}</span>
+              <span className="panel-agent-title">{agent.title}</span>
+            </p>
+          </div>
           {agent.isFrontDoor ? (
             <p className="panel-hint">
               Airlock · pintu depan habitat. Kirim brief lewat formulir — kru lain menerima

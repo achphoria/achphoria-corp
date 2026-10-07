@@ -1,7 +1,4 @@
-import { useMemo } from 'react'
-import { DESK_AGENTS, type DeskAgent } from '../data/agents'
-import { AstronautCharacter } from './AstronautCharacter'
-import { buildAgentLayouts, isoToPercent } from '../data/officeLayout'
+import { DESK_AGENTS, SEAT_POSITIONS, avatarUrl, type DeskAgent } from '../data/agents'
 
 type Props = {
   selectedSlug: string | null
@@ -9,114 +6,77 @@ type Props = {
   taskCounts: Record<string, number>
 }
 
-function IsoDesk({
+function AgentPin({
   agent,
-  layout,
   selected,
   taskCount,
   onSelect,
 }: {
   agent: DeskAgent
-  layout: ReturnType<typeof buildAgentLayouts>[number]
   selected: boolean
   taskCount: number
   onSelect: () => void
 }) {
-  const pos = isoToPercent(layout.gridX, layout.gridY)
+  const seat = SEAT_POSITIONS[agent.slug]
   const label = `${agent.displayName} · ${agent.title}`
 
   return (
     <button
       type="button"
-      className={`iso-desk ${agent.deskRow} ${selected ? 'selected' : ''} ${agent.isFrontDoor ? 'airlock' : ''}`}
-      style={{ left: pos.left, top: pos.top, zIndex: pos.zIndex }}
+      className={`agent-pin ${agent.deskRow} ${selected ? 'selected' : ''} ${agent.isFrontDoor ? 'front-door' : ''}`}
+      style={{ left: `${seat.x}%`, top: `${seat.y}%`, zIndex: Math.round(seat.y) }}
       onClick={onSelect}
       aria-label={label}
-      title={label}
+      aria-pressed={selected}
     >
-      <div className="iso-desk-top" />
-      <div className="iso-desk-side" />
-      <div className="iso-console">
-        <span className="iso-screen" />
-      </div>
-      <AstronautCharacter
-        name={agent.displayName}
-        suit={layout.suit}
-        selected={selected}
-        working={taskCount > 0}
-        isFrontDoor={agent.isFrontDoor}
-      />
-      {agent.isFrontDoor ? <span className="iso-badge airlock-badge">Airlock · Pak Arka</span> : null}
-      {taskCount > 0 ? <span className="iso-badge task-badge">{taskCount} tugas</span> : null}
-      <span className="iso-hover-label">{label}</span>
-      <span className="iso-activity">{layout.activity}</span>
+      {selected ? <span className="plumbob" aria-hidden="true" /> : null}
+      <span className="pin-avatar">
+        <img src={avatarUrl(agent.slug)} alt="" loading="lazy" />
+        {taskCount > 0 ? <span className="pin-count">{taskCount}</span> : null}
+      </span>
+      <span className="pin-name">{agent.displayName.replace(/^(Pak|Mbak)\s/, '')}</span>
+      <span className="pin-tooltip">{label}</span>
     </button>
   )
 }
 
 export function IsometricOffice({ selectedSlug, onSelect, taskCounts }: Props) {
-  const layouts = useMemo(() => buildAgentLayouts(DESK_AGENTS), [])
-
   return (
-    <section className="iso-office" aria-label="Base lunar ACHPHORIA — tampilan isometric">
-      <div className="iso-scene">
-        <div className="space-backdrop" aria-hidden="true">
-          <div className="stars" />
-          <div className="earth-glow" />
-          <div className="moon-horizon" />
+    <section className="lunar-office" aria-label="Kantor lunar ACHPHORIA">
+      <header className="habitat-header">
+        <div>
+          <p className="habitat-code">ACHPHORIA · LUNAR HAB-01</p>
+          <h2 className="habitat-title">Stasiun Kerja Orbit-Bulan</h2>
         </div>
-
-        <div className="habitat-shell">
-          <header className="habitat-header">
-            <div>
-              <p className="habitat-code">ACHPHORIA · LUNAR HAB-01</p>
-              <h2 className="habitat-title">Stasiun Kerja Orbit-Bulan</h2>
-            </div>
-            <div className="habitat-meta">
-              <span className="meta-pill live">● LIVE</span>
-              <span className="meta-pill">Gravitasi sim · 1 lantai</span>
-              <span className="meta-pill">10 kru aktif</span>
-            </div>
-          </header>
-
-          <div className="iso-floor-plate" aria-hidden="true">
-            <div className="deck-label deck-klien">DEK KLIEN · sisi barat habitat</div>
-            <div className="deck-aisle">
-              <span>Lorong tekanis · oksigen stabil</span>
-            </div>
-            <div className="deck-label deck-build">DEK BUILD · bay engineering</div>
-            <div className="window-band" />
-            <div className="crater-mark crater-a" />
-            <div className="crater-mark crater-b" />
-          </div>
-
-          <div className="iso-entities">
-            {layouts.map((layout) => {
-              const agent = DESK_AGENTS.find((a) => a.slug === layout.slug)!
-              return (
-                <IsoDesk
-                  key={layout.slug}
-                  agent={agent}
-                  layout={layout}
-                  selected={selectedSlug === layout.slug}
-                  taskCount={taskCounts[layout.slug] ?? 0}
-                  onSelect={() => onSelect(agent)}
-                />
-              )
-            })}
-          </div>
-
-          <div className="rover-pad" aria-hidden="true">
-            <span>Rover pad</span>
-          </div>
+        <div className="habitat-meta">
+          <span className="meta-pill live">● LIVE</span>
+          <span className="meta-pill">Gravitasi sim · 1 lantai</span>
+          <span className="meta-pill">{DESK_AGENTS.length} kru aktif</span>
         </div>
+      </header>
 
-        <p className="iso-footnote">
-          Gaya isometric ala simulasi kantor (Pixel Office / virtual office viral) · tema
-          pesawat di permukaan bulan. Klik astronot untuk panel tugas. Chat klien hanya ke
-          airlock Pak Arka.
-        </p>
+      <div className="scene">
+        <img
+          className="scene-bg"
+          src={`${import.meta.env.BASE_URL}scene/lunar-office.webp`}
+          alt="Interior habitat lunar ACHPHORIA: airlock, dua baris meja kerja, jendela ke permukaan bulan dan Bumi"
+        />
+        {DESK_AGENTS.map((agent) => (
+          <AgentPin
+            key={agent.slug}
+            agent={agent}
+            selected={selectedSlug === agent.slug}
+            taskCount={taskCounts[agent.slug] ?? 0}
+            onSelect={() => onSelect(agent)}
+          />
+        ))}
       </div>
+
+      <p className="scene-legend">
+        <span className="legend-dot klien" /> Dek klien
+        <span className="legend-dot build" /> Dek build · Maya → Galih → Reza → Tia, Pak Arka
+        menutup
+      </p>
     </section>
   )
 }
